@@ -3,7 +3,7 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 @Entity('users')
 class User {
   @PrimaryGeneratedColumn('uuid')
-  private id: string
+  id: string
 
   @Column()
   name: string
@@ -18,7 +18,7 @@ class User {
   created_at: Date
 
   @UpdateDateColumn()
-  update_at: Date
+  updated_at: Date
 }
 
 export default User
