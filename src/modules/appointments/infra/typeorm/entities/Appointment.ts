@@ -5,7 +5,7 @@ import User from "@modules/users/infra/typeorm/entities/User";
 @Entity('appointments')
 class Appointment {
   @PrimaryGeneratedColumn('uuid')
-  private id: string
+  id: string
 
   @Column()
   provider_id: string

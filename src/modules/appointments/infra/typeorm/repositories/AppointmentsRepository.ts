@@ -23,6 +23,8 @@ class AppointmentsRepository implements IAppointmentsRepository {
     const appointment = this.ormRepository.create({ provider_id, date });
 
     await this.ormRepository.save(appointment);
+
+    return appointment;
   }
 
 }
