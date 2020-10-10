@@ -11,10 +11,10 @@ let updateUserAvatarService: UpdateUserAvatarService;
 
 describe('UpdateUserAvatar', () => {
   beforeEach(() => {
-    const fakeUserRepository = new FakeUserRepository();
-    const fakeStorageProvider = new FakeStorageProvider();
+    fakeUserRepository = new FakeUserRepository();
+    fakeStorageProvider = new FakeStorageProvider();
 
-    const updateUserAvatarService = new UpdateUserAvatarService(
+    updateUserAvatarService = new UpdateUserAvatarService(
       fakeUserRepository,
       fakeStorageProvider,
     );
@@ -37,7 +37,7 @@ describe('UpdateUserAvatar', () => {
 
   it('should not be able to update avatar from non existing user', async () => {
 
-    expect(updateUserAvatarService.execute({
+    await expect(updateUserAvatarService.execute({
       user_id: 'non-existing-user',
       avatarFileName: 'avatar.jpg',
     })).rejects.toBeInstanceOf(AppError);

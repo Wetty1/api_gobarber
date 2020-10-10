@@ -1,9 +1,11 @@
-import { EntityRepository, getRepository, Repository } from 'typeorm'
+import { EntityRepository, getRepository, Repository, Raw } from 'typeorm'
+import { startOfMonth, endOfMonth } from 'date-fns';
 
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository'
 import ICreateAppointmentDTO from '@modules/appointments/dtos/ICreateAppointmentDTO';
 
 import Appointment from '../entities/Appointment'
+import IFindAllMonthFromProvider from '@modules/appointments/dtos/IFindAllInMonthProviderDTO';
 
 class AppointmentsRepository implements IAppointmentsRepository {
   private ormRepository: Repository<Appointment>
@@ -13,10 +15,24 @@ class AppointmentsRepository implements IAppointmentsRepository {
   }
 
   public async findByDate(date: Date): Promise<Appointment | undefined> {
-      const findAppointment = await this.ormRepository.findOne({
-        where: { date },
-      })
-      return findAppointment;
+    const findAppointment = await this.ormRepository.findOne({
+      where: { date },
+    })
+    return findAppointment;
+  }
+
+  public async findAllInMonthFromProvider({ month, provider_id, year }: IFindAllMonthFromProvider): Promise<Appointment[]> {
+    const parsedMonth = String(month).padStart(2, '0');
+
+    const appointments = await this.ormRepository.find({
+      where: {
+        provider_id,
+        date: Raw(dateFieldName =>
+          `toChar(${dateFieldName}, 'MM-YYYY') = '${parsedMonth}-${year}'`)
+      }
+    })
+
+    return appointments;
   }
 
   public async create({ provider_id, date }: ICreateAppointmentDTO): Promise<Appointment> {

@@ -7,8 +7,8 @@ let createAppointment: CreateAppointmentService;
 
 describe('CreateAppointment', () => {
   beforeEach(() => {
-    const fakeAppointmentRepository = new FakeAppointmentRepository();
-    const createAppointment = new CreateAppointmentService(
+    fakeAppointmentRepository = new FakeAppointmentRepository();
+    createAppointment = new CreateAppointmentService(
       fakeAppointmentRepository,
     )
   })
@@ -32,7 +32,7 @@ describe('CreateAppointment', () => {
       provider_id: '1231231'
     });
 
-    expect(createAppointment.execute({
+    await expect(createAppointment.execute({
       date: appointmentDate,
       provider_id: '1231231'
     })).rejects.toBeInstanceOf(AppError);
