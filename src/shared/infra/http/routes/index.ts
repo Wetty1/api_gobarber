@@ -4,7 +4,7 @@ import usersRouter from '@modules/users/infra/http/routes/user.routes'
 import sessionRouter from '@modules/users/infra/http/routes/seesions.routes'
 import passwordRouter from '@modules/users/infra/http/routes/password.routes'
 import profileRouter from '@modules/users/infra/http/routes/profile.routes'
-import providersRouter from '@modules/users/infra/http/routes/profile.routes'
+import providersRouter from '@modules/appointments/infra/http/routes/providers.routes'
 
 const router = Router()
 
