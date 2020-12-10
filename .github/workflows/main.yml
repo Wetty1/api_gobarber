@@ -4,8 +4,6 @@ on:
   push:
     branches: [ master ]
 
-  workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,27 +16,55 @@ jobs:
         with:
           node-version: 12.x
           
+      # Instalar as dependencias NPM/yarn
       - name: Install dependences
         run: yarn
         
+      # Executar a build
       - name: Run build
         run: yarn build
         
-      - name: copy file via ssh password
+       # Copiar pasta dist para dentro do servidor
+      - name: copy file to paste dist
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
-          source: "."
+          source: ".,!node_modules"
           target: "~/app/api_gobarber"
 
-    # Instalar as dependencias NPM/yarn
-    # Executar a build
-    # Copiar pasta dist para dentro do servidor
-      
-    #Substituir o código existente na pasta "dist" pelo novo código
-    # Executar "yarn" no Servidor
-    # Executar as migrations do Typeorm
-    # Restartar no servidor NodeJS
+      # Executar "yarn" no Servidor 
+      - name: Install dependeces on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/app/api_gobarber
+            yarn
+            
+      # Executar as migrations do Typeorm
+      - name: Run migrations on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/app/api_gobarber
+            ./node_modules/.bin/typeorm migration:run
+            
+      # Restartar no servidor NodeJS
+      - name: Run migrations on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script: pm2 restart gobarber-api
